@@ -4,8 +4,8 @@ from modules.depthai.hostsync import HostSync
 
 class DepthAIPublisher():
     def __init__(self, port_no = 5000) -> None:
-        
         self.create_pipeline()
+        self.create_publisher(port_no)
 
     def create_pipeline(self):
         pipeline = dai.Pipeline()
@@ -40,3 +40,10 @@ class DepthAIPublisher():
         imu_pipeline.out.link(xout_imu.input)
 
         self.pipeline = pipeline
+
+    
+    def create_publisher(self, port_no):
+        self.publisher = zmq.Context().socket(zmq.PUB)
+        self.publisher.bind(f"tcp://*:{port_no}")
+
+    
