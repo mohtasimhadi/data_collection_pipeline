@@ -7,7 +7,7 @@ import subprocess
 def main():
     parser = argparse.ArgumentParser(description="Data Collection Executionar")
     parser.add_argument('--port_no', type=int, default=5500, help="Initial Publisher Port")
-    parser.add_argument('--out', type=str, required=True, help="Output Directory")
+    parser.add_argument('--out', type=str, default="out", help="Output directory")
     args = parser.parse_args()
 
     devices = dai.Device.getAllAvailableDevices()
