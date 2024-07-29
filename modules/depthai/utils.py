@@ -53,7 +53,7 @@ def get_queues(device):
     imu_queue = device.getOutputQueue(name='imu', maxSize=30, blocking=True)
     return queues, imu_queue
 
-def save_calibration(calibData, output_dir, thread):
+def get_calibration(calibData):
     calib_dict = {
         'left_intrinsics'           : calibData.getCameraIntrinsics(dai.CameraBoardSocket.CAM_B, dai.Size2f(1080, 720)),
         'right_intrinsics'          : calibData.getCameraIntrinsics(dai.CameraBoardSocket.CAM_C, dai.Size2f(1080, 720)),
@@ -66,9 +66,7 @@ def save_calibration(calibData, output_dir, thread):
         'extrinsics_left_to_rgb'    : calibData.getCameraExtrinsics(dai.CameraBoardSocket.CAM_B, dai.CameraBoardSocket.CAM_A),
         'extrinsics_right_to_rgb'   : calibData.getCameraExtrinsics(dai.CameraBoardSocket.CAM_C, dai.CameraBoardSocket.CAM_A)
     }
-    file_calibration = os.path.join(output_dir, f'{thread}_calibration.json')
-    with open(file_calibration, 'w') as f:
-        json.dump(calib_dict, f, indent=4)
+    return calib_dict
 
 def get_files(output_dir, thread):
     file_color = open(os.path.join(output_dir, f'{thread}_color.h265'), 'wb')
