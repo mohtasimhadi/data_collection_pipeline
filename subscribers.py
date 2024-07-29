@@ -3,27 +3,26 @@ from modules.depthai.utils import get_files
 
 def main():
     parser = argparse.ArgumentParser(description="Data Collection Subscriber")
-    parser.add_argument('--port_no', type=str, required=True, help="Publisher Port No")
-    parser.add_argument('--device_count', type=str, required=True, help="Total Number of Camera Devices")
+    parser.add_argument('--port_no', type=str, required=True, help="Publisher port no")
+    parser.add_argument('--out', type=str, required=True, help="Output directory.")
+    parser.add_argument('--mxid', type=str, required=True, help="Camer MX ID.")
     args = parser.parse_args()
 
     context = zmq.Context()
-    subscriber = []
-    for i in range(args.device_count):
-        subscriber.append(context.socket(zmq.SUB))
-        subscriber[i].connect(f"tcp://localhost:{str(int(args.port_no) + i)}")
-        subscriber[i].setsockopt_string(zmq.SUBSCRIBE, "")
+    subscriber = context.socket(zmq.SUB)
+    subscriber.connect(f"tcp://localhost:{args.port_no}")
+    subscriber.setsockopt_string(zmq.SUBSCRIBE, "")
 
-    file_color, file_monoL, file_monoR, file_imus = get_files("out", "thread")
+    file_color, file_monoL, file_monoR, file_imus = get_files(args.out, args.mxid)
 
     while True:
         message = pickle.loads(subscriber.recv())
         file_color.write(message["color"])
         file_monoL.write(message["monoL"])
         file_monoR.write(message["monoR"])
-        depth_file_name = f'depth/' +str(message['depth']['sequence']) + f"_{str(message['depth']['timestamp'])}.png"
-        cv2.imwrite(os.path.join("out", depth_file_name), message['depth']['frame'])
-        file_imus.write((str(message['imu']) + "\n").encode())
+        depth_file_name = f'depth_{args.mxid}/' +str(message['depth']['sequence']) + f"_{str(message['depth']['timestamp'])}.png"
+        cv2.imwrite(os.path.join(args.out, depth_file_name), message['depth']['frame'])
+        file_imus.write(str(message['imu']).encode())
 
 
 if __name__ == "__main__":
