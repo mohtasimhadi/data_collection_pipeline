@@ -3,7 +3,8 @@ from modules.depthai.utils import *
 from modules.depthai.hostsync import HostSync
 
 class DepthAIPublisher():
-    def __init__(self, port_no = 5000) -> None:
+    def __init__(self, camera_id, port_no = 5000) -> None:
+        self.camera_id = camera_id
         self.create_pipeline()
         self.create_publisher(port_no)
 
@@ -47,7 +48,7 @@ class DepthAIPublisher():
         self.publisher.bind(f"tcp://*:{port_no}")
 
     def publish(self):
-        with dai.Device(self.pipeline) as device:
+        with dai.Device(self.pipeline, self.camera_id) as device:
             queues, imu_queue = get_queues(device)
             sync = HostSync()
             print("Publisher started...")
