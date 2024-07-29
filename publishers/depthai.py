@@ -3,8 +3,9 @@ from modules.depthai.utils import *
 from modules.depthai.hostsync import HostSync
 
 class DepthAIPublisher():
-    def __init__(self, camera_id, port_no = 5000) -> None:
+    def __init__(self, camera_id, output_dir, port_no = 5000) -> None:
         self.camera_id = camera_id
+        self.output_dir = output_dir
         self.create_pipeline()
         self.create_publisher(port_no)
 
@@ -59,8 +60,8 @@ class DepthAIPublisher():
             raise RuntimeError(f"No device found with mx_id: {self.camera_id}")
         
         with dai.Device(self.pipeline, selected_device) as device:
+            self.save_calibration(device.readCalibration())
             queues, imu_queue = get_queues(device)
-            calibration = get_calibration(device.readCalibration())
             sync = HostSync()
             print("Publisher started...")
             while True:
@@ -70,7 +71,6 @@ class DepthAIPublisher():
                         
                         buffer = pickle.dumps({
                             "camera_id"     : selected_device.mxid,
-                            "calibration"   : calibration,
                             "color"         : message['color'].getData(),
                             "monoL"         : message['monoL'].getData(),
                             "monoR"         : message['monoR'].getData(),
@@ -82,3 +82,20 @@ class DepthAIPublisher():
                             "imu"           : imu_data_processing(imu_queue.get())
                         })
                         self.publisher.send(buffer)
+    
+    def save_calibration(self, calibData):
+        calib_dict = {
+            'left_intrinsics'           : calibData.getCameraIntrinsics(dai.CameraBoardSocket.CAM_B, dai.Size2f(1080, 720)),
+            'right_intrinsics'          : calibData.getCameraIntrinsics(dai.CameraBoardSocket.CAM_C, dai.Size2f(1080, 720)),
+            'rgb_intrinsics'            : calibData.getCameraIntrinsics(dai.CameraBoardSocket.CAM_A, dai.Size2f(1920, 1080)),
+            'left_distortion'           : calibData.getDistortionCoefficients(dai.CameraBoardSocket.CAM_B),
+            'right_distortion'          : calibData.getDistortionCoefficients(dai.CameraBoardSocket.CAM_C),
+            'rgb_distortion'            : calibData.getDistortionCoefficients(dai.CameraBoardSocket.CAM_A),
+            'extrinsics_left_to_right'  : calibData.getCameraExtrinsics(dai.CameraBoardSocket.CAM_B, dai.CameraBoardSocket.CAM_C),
+            'extrinsics_right_to_left'  : calibData.getCameraExtrinsics(dai.CameraBoardSocket.CAM_C, dai.CameraBoardSocket.CAM_B),
+            'extrinsics_left_to_rgb'    : calibData.getCameraExtrinsics(dai.CameraBoardSocket.CAM_B, dai.CameraBoardSocket.CAM_A),
+            'extrinsics_right_to_rgb'   : calibData.getCameraExtrinsics(dai.CameraBoardSocket.CAM_C, dai.CameraBoardSocket.CAM_A)
+        }
+        file_calibration = os.path.join(self.output_dir, f'{self.camera_id}_calibration.json')
+        with open(file_calibration, 'w') as f:
+            json.dump(calib_dict, f, indent=4)
