@@ -76,29 +76,6 @@ def get_files(output_dir, thread):
 
     return file_color, file_monoL, file_monoR, file_imus
 
-def write_imu(imu_message, file_imus):
-    for imu_packet in imu_message.packets:
-        acceleroValues = imu_packet.acceleroMeter
-        gyroValues = imu_packet.gyroscope
-        acceleroTs = acceleroValues.getTimestampDevice()
-        gyroTs = gyroValues.getTimestampDevice()
-
-        imu_data = {
-            "acceleroMeter" : {
-                "x": acceleroValues.x,
-                "y": acceleroValues.y,
-                "z": acceleroValues.z,
-                "timestamp": acceleroTs
-            },
-            "gyroscope"     : {
-                "x": gyroValues.x,
-                "y": gyroValues.y,
-                "z": gyroValues.z,
-                "timestamp": gyroTs
-            }
-        }
-        file_imus.write(("{'imu_timestamp': '" + str(imu_message.getTimestampDevice()) + "',    'IMU': " + str(imu_data) + '\n').encode())
-
 def imu_data_processing(imu_message):
     for imu_packet in imu_message.packets:
         acceleroValues = imu_packet.acceleroMeter

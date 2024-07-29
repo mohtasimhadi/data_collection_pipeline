@@ -1,5 +1,5 @@
 import os, cv2, pickle, zmq, argparse
-from modules.depthai.utils import get_files, write_imu
+from modules.depthai.utils import get_files
 
 def main():
     parser = argparse.ArgumentParser(description="Data Collection Subscriber")
@@ -21,7 +21,7 @@ def main():
         file_monoR.write(message["monoR"])
         depth_file_name = f'depth/' +str(message['depth']['sequence']) + f"_{str(message['depth']['timestamp'])}.png"
         cv2.imwrite(os.path.join("out", depth_file_name), message['depth']['frame'])
-        write_imu(file_imus=file_imus, imu_message=message["imu"])
+        file_imus.write((str(message['imu']) + "\n").encode())
 
 
 if __name__ == "__main__":
