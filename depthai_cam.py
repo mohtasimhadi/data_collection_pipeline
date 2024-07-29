@@ -1,7 +1,7 @@
 import argparse
 from publishers.depthai import DepthAIPublisher
 
-def func():
+def main():
     parser = argparse.ArgumentParser(description="DepthAI Camera Info Parser")
     parser.add_argument('--mxid', type=str, required=True, help="Camera MX ID")
     parser.add_argument('--port_no', type=str, required=True, help="Publisher Port No")
@@ -14,4 +14,4 @@ def func():
     publisher.publish()
 
 if __name__ == "__main__":
-    func()
+    main()
