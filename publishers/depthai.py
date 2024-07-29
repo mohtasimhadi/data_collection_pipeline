@@ -63,7 +63,7 @@ class DepthAIPublisher():
             self.save_calibration(device.readCalibration())
             queues, imu_queue = get_queues(device)
             sync = HostSync()
-            print("Publisher started...")
+            print(f'Press Ctl+C to stop publisher...')
             while True:
                 for queue in queues:
                     message = sync.add_msg(queue.getName(), queue.get())

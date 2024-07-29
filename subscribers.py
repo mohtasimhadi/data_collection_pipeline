@@ -8,6 +8,10 @@ def main():
     parser.add_argument('--mxid', type=str, required=True, help="Camer MX ID.")
     args = parser.parse_args()
 
+    print(f'Camera ID         : {args.mxid}')
+    print(f'Port No           : {args.port_no}')
+    print(f'Press Ctl+C to stop subscriber...')
+
     context = zmq.Context()
     subscriber = context.socket(zmq.SUB)
     subscriber.connect(f"tcp://localhost:{args.port_no}")
