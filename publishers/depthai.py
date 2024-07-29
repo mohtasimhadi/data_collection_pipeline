@@ -46,4 +46,25 @@ class DepthAIPublisher():
         self.publisher = zmq.Context().socket(zmq.PUB)
         self.publisher.bind(f"tcp://*:{port_no}")
 
-    
+    def publish(self):
+        with dai.Device(self.pipeline) as device:
+            queues, imu_queue = get_queues(device)
+            sync = HostSync()
+            print("Publisher started...")
+            while True:
+                for queue in queues:
+                    message = sync.add_msg(queue.getName(), queue.get())
+                    if message:
+                        
+                        buffer = pickle.dumps({
+                            "color": message['color'].getData(),
+                            "monoL": message['monoL'].getData(),
+                            "monoR": message['monoR'].getData(),
+                            "depth": {
+                                "frame":     message['depth'].getFrame(),
+                                "timestamp": message['depth'].getTimestampDevice(),
+                                "sequence":  message['depth'].getSequenceNum()
+                                },
+                            "imu"  : imu_data_processing(imu_queue.get())
+                        })
+                        self.publisher.send(buffer)
