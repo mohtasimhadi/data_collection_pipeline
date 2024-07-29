@@ -26,7 +26,7 @@ def main():
         file_monoR.write(message["monoR"])
         depth_file_name = f'depth_{args.mxid}/' +str(message['depth']['sequence']) + f"_{str(message['depth']['timestamp'])}.png"
         cv2.imwrite(os.path.join(args.out, depth_file_name), message['depth']['frame'])
-        file_imus.write(str(message['imu']).encode())
+        file_imus.write((str(message['imu']) + '\n').encode())
 
 
 if __name__ == "__main__":
