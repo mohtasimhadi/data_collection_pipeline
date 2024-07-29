@@ -3,14 +3,16 @@ from modules.depthai.utils import get_files
 
 def main():
     parser = argparse.ArgumentParser(description="Data Collection Subscriber")
-    # parser.add_argument('--device_count', type=int, required=True, help="Number of Camera")
     parser.add_argument('--port_no', type=str, required=True, help="Publisher Port No")
+    parser.add_argument('--device_count', type=str, required=True, help="Total Number of Camera Devices")
     args = parser.parse_args()
 
     context = zmq.Context()
-    subscriber = context.socket(zmq.SUB)
-    subscriber.connect(f"tcp://localhost:{args.port_no}")
-    subscriber.setsockopt_string(zmq.SUBSCRIBE, "")
+    subscriber = []
+    for i in range(args.device_count):
+        subscriber.append(context.socket(zmq.SUB))
+        subscriber[i].connect(f"tcp://localhost:{str(int(args.port_no) + i)}")
+        subscriber[i].setsockopt_string(zmq.SUBSCRIBE, "")
 
     file_color, file_monoL, file_monoR, file_imus = get_files("out", "thread")
 
