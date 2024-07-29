@@ -60,6 +60,7 @@ class DepthAIPublisher():
         
         with dai.Device(self.pipeline, selected_device) as device:
             queues, imu_queue = get_queues(device)
+            calibration = get_calibration(device.readCalibration())
             sync = HostSync()
             print("Publisher started...")
             while True:
@@ -68,14 +69,16 @@ class DepthAIPublisher():
                     if message:
                         
                         buffer = pickle.dumps({
-                            "color": message['color'].getData(),
-                            "monoL": message['monoL'].getData(),
-                            "monoR": message['monoR'].getData(),
-                            "depth": {
-                                "frame":     message['depth'].getFrame(),
-                                "timestamp": message['depth'].getTimestampDevice(),
-                                "sequence":  message['depth'].getSequenceNum()
-                                },
-                            "imu"  : imu_data_processing(imu_queue.get())
+                            "camera_id"     : selected_device.mxid,
+                            "calibration"   : calibration,
+                            "color"         : message['color'].getData(),
+                            "monoL"         : message['monoL'].getData(),
+                            "monoR"         : message['monoR'].getData(),
+                            "depth"         : {
+                                "frame"     :   message['depth'].getFrame(),
+                                "timestamp" :   message['depth'].getTimestampDevice(),
+                                "sequence"  :   message['depth'].getSequenceNum()
+                                            },
+                            "imu"           : imu_data_processing(imu_queue.get())
                         })
                         self.publisher.send(buffer)
