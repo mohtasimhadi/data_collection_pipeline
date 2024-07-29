@@ -48,7 +48,17 @@ class DepthAIPublisher():
         self.publisher.bind(f"tcp://*:{port_no}")
 
     def publish(self):
-        with dai.Device(self.pipeline, self.camera_id) as device:
+        devices = dai.Device.getAllAvailableDevices()
+        selected_device = None
+        for device in devices:
+            if device.getMxId() == self.camera_id:
+                selected_device = device
+                break
+        
+        if not selected_device:
+            raise RuntimeError(f"No device found with mx_id: {self.camera_id}")
+        
+        with dai.Device(self.pipeline, selected_device) as device:
             queues, imu_queue = get_queues(device)
             sync = HostSync()
             print("Publisher started...")
