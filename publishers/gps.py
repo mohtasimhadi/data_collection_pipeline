@@ -1,3 +1,4 @@
+import argparse
 import zmq
 import serial
 import threading
@@ -12,21 +13,11 @@ class GPSPublisher:
         self.serial_port = serial_port
         self.serial_baudrate = serial_baudrate
         self.serial_conn = serial.Serial(self.serial_port, self.serial_baudrate, timeout=1)
-        
-        self.read_thread = threading.Thread(target=self.read_serial)
-        self.read_thread.daemon = True
-        self.read_thread.start()
     
     def read_serial(self):
+        print("GPS Data Publisher started...")
         while True:
             line = self.serial_conn.readline().decode('utf-8', errors='ignore').strip()
             if line.startswith('$GNRMC'):
-                # Serialize the data using pickle
                 serialized_data = pickle.dumps(line)
-                # Publish the serialized data
                 self.publisher.send(serialized_data)
-
-    def close(self):
-        self.serial_conn.close()
-        self.publisher.close()
-        self.context.term()
