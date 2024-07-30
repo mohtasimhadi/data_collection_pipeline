@@ -8,6 +8,7 @@ def main():
     parser = argparse.ArgumentParser(description="Data Collection Executionar")
     parser.add_argument('--port_no', type=int, default=5500, help="Initial Publisher Port")
     parser.add_argument('--out', type=str, default="out", help="Output directory")
+    parser.add_argument('--gps', type=bool, default=False, help="If GPS data to be collected")
     args = parser.parse_args()
 
     devices = dai.Device.getAllAvailableDevices()
@@ -30,10 +31,15 @@ def main():
             os.makedirs(args.out+'/depth_'+device.mxid)
         subprocess.Popen(['gnome-terminal', '--', 'bash', '-c', f'python3 depthai_cam.py --out {args.out} --port_no {port_no} --mxid {device.mxid}; exec bash'])
         port_no += 1
+    if args.gps:
+        subprocess.Popen(['gnome-terminal', '--', 'bash', '-c', f'python3 gps.py; exec bash'])
     ports = ','.join(map(str, ports))
     mxids = ','.join(map(str, mxids))
     time.sleep(5)
-    subprocess.Popen(['gnome-terminal', '--', 'bash', '-c', f'python3 subscriber.py --out {args.out} --port_nos {ports} --mxids {mxids}; exec bash'])
+    if args.gps:
+        subprocess.Popen(['gnome-terminal', '--', 'bash', '-c', f'python3 subscriber.py --out {args.out} --port_nos {ports} --mxids {mxids} --gps true; exec bash'])
+    else:
+        subprocess.Popen(['gnome-terminal', '--', 'bash', '-c', f'python3 subscriber.py --out {args.out} --port_nos {ports} --mxids {mxids}; exec bash'])
 
 if __name__ == "__main__":
     main()
