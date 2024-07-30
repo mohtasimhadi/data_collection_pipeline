@@ -21,18 +21,19 @@ def main():
         os.makedirs(args.out)
 
     port_no = args.port_no
+    ports = []
+    mxids = []
     for device in devices:
+        ports.append(str(port_no))
+        mxids.append(str(device.mxid))
         if not os.path.exists(args.out+'/depth_'+device.mxid):
             os.makedirs(args.out+'/depth_'+device.mxid)
         subprocess.Popen(['gnome-terminal', '--', 'bash', '-c', f'python3 depthai_cam.py --out {args.out} --port_no {port_no} --mxid {device.mxid}; exec bash'])
         port_no += 1
-
-    time.sleep(15)
-    port_no = args.port_no
-    for device in devices:
-        subprocess.Popen(['gnome-terminal', '--', 'bash', '-c', f'python3 subscribers.py --out {args.out} --port_no {port_no} --mxid {device.mxid}; exec bash'])
-        port_no += 1
-
+    ports = ','.join(map(str, ports))
+    mxids = ','.join(map(str, mxids))
+    time.sleep(5)
+    subprocess.Popen(['gnome-terminal', '--', 'bash', '-c', f'python3 subscriber.py --out {args.out} --port_nos {ports} --mxids {mxids}; exec bash'])
 
 if __name__ == "__main__":
     main()
