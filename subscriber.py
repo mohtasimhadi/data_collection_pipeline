@@ -48,6 +48,9 @@ def main():
     time = "-"
     if args.gps:
         gps_subscriber = GPSSubscriber(port=6000, out=args.out)
+        with open(args.out+'/gnrmc_data.csv', mode='w', newline='') as csv_file:
+            writer = csv.writer(csv_file)
+            writer.writerow(['Timestamp', 'GNRMC Data'])
 
     while True:
         for port, subscriber in zip(ports, subscribers):
@@ -65,7 +68,9 @@ def main():
             except zmq.Again:
                 pass
         if args.gps:
-            print(time, gps_subscriber.receive_data())
+            with open(args.out+'/gnrmc_data.csv', mode='a', newline='') as csv_file:
+                writer = csv.writer(csv_file)
+                writer.writerow([time, gps_subscriber.receive_data()])
 
 if __name__ == "__main__":
     main()
