@@ -37,7 +37,7 @@ def main():
     mxids = ','.join(map(str, mxids))
     time.sleep(5)
     if args.gps:
-        subprocess.Popen(['gnome-terminal', '--', 'bash', '-c', f'python3 test.py --out {args.out} --port_nos {ports} --mxids {mxids} --gps true; exec bash'])
+        subprocess.Popen(['gnome-terminal', '--', 'bash', '-c', f'python3 subscriber.py --out {args.out} --port_nos {ports} --mxids {mxids} --gps true; exec bash'])
     else:
         subprocess.Popen(['gnome-terminal', '--', 'bash', '-c', f'python3 subscriber.py --out {args.out} --port_nos {ports} --mxids {mxids}; exec bash'])
 
