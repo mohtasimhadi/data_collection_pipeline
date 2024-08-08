@@ -9,6 +9,39 @@
         "documentation": {}
     },
     {
+        "label": "argparse",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "argparse",
+        "description": "argparse",
+        "detail": "argparse",
+        "documentation": {}
+    },
+    {
+        "label": "record_video",
+        "importPath": "record",
+        "description": "record",
+        "isExtraImport": true,
+        "detail": "record",
+        "documentation": {}
+    },
+    {
+        "label": "live_stream",
+        "importPath": "stream",
+        "description": "stream",
+        "isExtraImport": true,
+        "detail": "stream",
+        "documentation": {}
+    },
+    {
+        "label": "extract_frames_from_video",
+        "importPath": "extract_frames",
+        "description": "extract_frames",
+        "isExtraImport": true,
+        "detail": "extract_frames",
+        "documentation": {}
+    },
+    {
         "label": "depthai",
         "kind": 6,
         "isExtraImport": true,
@@ -24,6 +57,15 @@
         "description": "extract_frames",
         "peekOfCode": "def extract_frames_from_video(input_file, output_folder):\n    cap = cv2.VideoCapture(input_file)\n    frame_count = 0\n    while cap.isOpened():\n        ret, frame = cap.read()\n        if not ret:\n            break\n        cv2.imwrite(f\"{output_folder}/frame_{frame_count:04d}.png\", frame)\n        frame_count += 1\n    cap.release()",
         "detail": "extract_frames",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def main():\n    parser = argparse.ArgumentParser(description=\"DepthAI Camera Operations\")\n    parser.add_argument('operation', choices=['record', 'stream', 'extract'], help=\"Operation to perform: record, stream, extract\")\n    parser.add_argument('--cameras', nargs='+', choices=['left', 'right', 'rgb'], help=\"Cameras to use: left, right, rgb\")\n    parser.add_argument('--output', type=str, help=\"Output file for recording or extracting frames\")\n    parser.add_argument('--input', type=str, help=\"Input file for extracting frames\")\n    args = parser.parse_args()\n    if args.operation == 'record':\n        record_video(args.cameras, args.output)\n    elif args.operation == 'stream':",
+        "detail": "main",
         "documentation": {}
     },
     {
