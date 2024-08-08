@@ -1,5 +1,32 @@
 [
     {
+        "label": "depthai",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "depthai",
+        "description": "depthai",
+        "detail": "depthai",
+        "documentation": {}
+    },
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "time",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "time",
+        "description": "time",
+        "detail": "time",
+        "documentation": {}
+    },
+    {
         "label": "cv2",
         "kind": 6,
         "isExtraImport": true,
@@ -18,19 +45,11 @@
         "documentation": {}
     },
     {
-        "label": "record_video",
-        "importPath": "record",
-        "description": "record",
+        "label": "DepthAIModule",
+        "importPath": "depthai_module",
+        "description": "depthai_module",
         "isExtraImport": true,
-        "detail": "record",
-        "documentation": {}
-    },
-    {
-        "label": "live_stream",
-        "importPath": "stream",
-        "description": "stream",
-        "isExtraImport": true,
-        "detail": "stream",
+        "detail": "depthai_module",
         "documentation": {}
     },
     {
@@ -42,12 +61,12 @@
         "documentation": {}
     },
     {
-        "label": "depthai",
+        "label": "DepthAIModule",
         "kind": 6,
-        "isExtraImport": true,
-        "importPath": "depthai",
-        "description": "depthai",
-        "detail": "depthai",
+        "importPath": "depthai_module",
+        "description": "depthai_module",
+        "peekOfCode": "class DepthAIModule:\n    def __init__(self, cameras, output_folder=\"output\"):\n        self.cameras = cameras\n        self.devices = dai.Device.getAllAvailableDevices()\n        self.output_folder = output_folder\n        if len(self.devices) == 0:\n            raise RuntimeError(\"No DepthAI devices found!\")\n        os.makedirs(self.output_folder, exist_ok=True)\n    def create_pipeline(self):\n        pipeline = dai.Pipeline()",
+        "detail": "depthai_module",
         "documentation": {}
     },
     {
@@ -64,26 +83,8 @@
         "kind": 2,
         "importPath": "main",
         "description": "main",
-        "peekOfCode": "def main():\n    parser = argparse.ArgumentParser(description=\"DepthAI Camera Operations\")\n    parser.add_argument('operation', choices=['record', 'stream', 'extract'], help=\"Operation to perform: record, stream, extract\")\n    parser.add_argument('--cameras', nargs='+', choices=['left', 'right', 'rgb'], help=\"Cameras to use: left, right, rgb\")\n    parser.add_argument('--output', type=str, help=\"Output file for recording or extracting frames\")\n    parser.add_argument('--input', type=str, help=\"Input file for extracting frames\")\n    args = parser.parse_args()\n    if args.operation == 'record':\n        record_video(args.cameras, args.output)\n    elif args.operation == 'stream':",
+        "peekOfCode": "def main():\n    parser = argparse.ArgumentParser(description=\"DepthAI Camera Operations\")\n    parser.add_argument('operation', choices=['record', 'stream', 'extract'], help=\"Operation to perform: record, stream, extract\")\n    parser.add_argument('--cameras', nargs='+', choices=['left', 'right', 'rgb'], help=\"Cameras to use: left, right, rgb\")\n    parser.add_argument('--output', type=str, help=\"Output file for recording or extracting frames\")\n    parser.add_argument('--input', type=str, help=\"Input file for extracting frames\")\n    args = parser.parse_args()\n    if args.operation in ['record', 'stream']:\n        module = DepthAIModule(args.cameras)\n    if args.operation == 'record':",
         "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "record_video",
-        "kind": 2,
-        "importPath": "record",
-        "description": "record",
-        "peekOfCode": "def record_video(cameras, output_file):\n    pipeline = dai.Pipeline()\n    camera_nodes = {}\n    encoders = {}\n    if 'left' in cameras:\n        mono_left = pipeline.create(dai.node.MonoCamera)\n        mono_left.setBoardSocket(dai.CameraBoardSocket.LEFT)\n        encoder_left = pipeline.create(dai.node.VideoEncoder)\n        encoder_left.setDefaultProfilePreset(30, dai.VideoEncoderProperties.Profile.H265_MAIN)\n        mono_left.out.link(encoder_left.input)",
-        "detail": "record",
-        "documentation": {}
-    },
-    {
-        "label": "live_stream",
-        "kind": 2,
-        "importPath": "stream",
-        "description": "stream",
-        "peekOfCode": "def live_stream(cameras):\n    pipeline = dai.Pipeline()\n    camera_nodes = {}\n    if 'left' in cameras:\n        mono_left = pipeline.create(dai.node.MonoCamera)\n        mono_left.setBoardSocket(dai.CameraBoardSocket.LEFT)\n        xout_left = pipeline.create(dai.node.XLinkOut)\n        xout_left.setStreamName(\"left\")\n        mono_left.out.link(xout_left.input)\n        camera_nodes['left'] = \"left\"",
-        "detail": "stream",
         "documentation": {}
     }
 ]

@@ -1,6 +1,5 @@
 import argparse
-from record import record_video
-from stream import live_stream
+from depthai_module import DepthAIModule
 from extract_frames import extract_frames_from_video
 
 def main():
@@ -12,10 +11,13 @@ def main():
 
     args = parser.parse_args()
 
+    if args.operation in ['record', 'stream']:
+        module = DepthAIModule(args.cameras)
+
     if args.operation == 'record':
-        record_video(args.cameras, args.output)
+        module.record_video(args.output)
     elif args.operation == 'stream':
-        live_stream(args.cameras)
+        module.live_stream()
     elif args.operation == 'extract':
         extract_frames_from_video(args.input, args.output)
 
