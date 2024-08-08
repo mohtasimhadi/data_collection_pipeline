@@ -1,0 +1,29 @@
+[
+    {
+        "label": "depthai",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "depthai",
+        "description": "depthai",
+        "detail": "depthai",
+        "documentation": {}
+    },
+    {
+        "label": "cv2",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "cv2",
+        "description": "cv2",
+        "detail": "cv2",
+        "documentation": {}
+    },
+    {
+        "label": "live_stream",
+        "kind": 2,
+        "importPath": "stream",
+        "description": "stream",
+        "peekOfCode": "def live_stream(cameras):\n    pipeline = dai.Pipeline()\n    camera_nodes = {}\n    if 'left' in cameras:\n        mono_left = pipeline.create(dai.node.MonoCamera)\n        mono_left.setBoardSocket(dai.CameraBoardSocket.LEFT)\n        xout_left = pipeline.create(dai.node.XLinkOut)\n        xout_left.setStreamName(\"left\")\n        mono_left.out.link(xout_left.input)\n        camera_nodes['left'] = \"left\"",
+        "detail": "stream",
+        "documentation": {}
+    }
+]
