@@ -18,6 +18,15 @@
         "documentation": {}
     },
     {
+        "label": "record_video",
+        "kind": 2,
+        "importPath": "record",
+        "description": "record",
+        "peekOfCode": "def record_video(cameras, output_file):\n    pipeline = dai.Pipeline()\n    camera_nodes = {}\n    encoders = {}\n    if 'left' in cameras:\n        mono_left = pipeline.create(dai.node.MonoCamera)\n        mono_left.setBoardSocket(dai.CameraBoardSocket.LEFT)\n        encoder_left = pipeline.create(dai.node.VideoEncoder)\n        encoder_left.setDefaultProfilePreset(30, dai.VideoEncoderProperties.Profile.H265_MAIN)\n        mono_left.out.link(encoder_left.input)",
+        "detail": "record",
+        "documentation": {}
+    },
+    {
         "label": "live_stream",
         "kind": 2,
         "importPath": "stream",
